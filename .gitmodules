@@ -1,0 +1,3 @@
+[submodule "vendor/DummyJSON"]
+	path = vendor/DummyJSON
+	url = https://github.com/Ovi/DummyJSON.git
