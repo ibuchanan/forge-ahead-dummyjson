@@ -1,0 +1,31 @@
+colors: false
+output:
+  - meta
+  - summary
+  - failure
+
+pre-commit:
+  commands:
+    format:
+      run: npm run format
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      run: lefthook run lint
+    format:
+      run: npm run format:check
+    test:
+      run: npm run test
+
+lint:
+  parallel: true
+  commands:
+    check:
+      run: npm run lint:check
+    format:
+      run: npm run format:check
+    typecheck:
+      run: npm run typecheck
