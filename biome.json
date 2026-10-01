@@ -8,7 +8,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!dist", "!specs"]
+    "includes": ["**", "!dist", "!specs", "!src/generated.ts", "!vendor"]
   },
   "formatter": {
     "enabled": true,

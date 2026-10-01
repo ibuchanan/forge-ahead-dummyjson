@@ -1,0 +1,5954 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DummyJSON public read-only API",
+    "version": "1.0.0",
+    "description": "Reviewed against the pinned DummyJSON source. Record fields are dataset-inferred and optional because `select` and future dataset revisions can change their presence; no dataset values are embedded. HTTP errors are handled by the client layer."
+  },
+  "servers": [
+    {
+      "url": "https://dummyjson.com"
+    }
+  ],
+  "paths": {
+    "/cart": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/{id}": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cart"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/user/{userId}": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carts": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carts/{id}": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cart"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carts/user/{userId}": {
+      "get": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Get cart user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment/{id}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/comment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment/post/{postId}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment post :postId",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/comment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/post/{postId}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get comment post :postId",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/{id}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/{postId}/comments": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post :postId comments",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/search": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/tag-list": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tag-list",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/tag/{tag}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tag :tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/tags": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tags",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/user/{userId}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{id}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{postId}/comments": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post :postId comments",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/search": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/tag-list": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tag-list",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/tag/{tag}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tag :tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/tags": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post tags",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/user/{userId}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/categories": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product categories",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/category-list": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product category-list",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/category/{categoryName}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product category :categoryName",
+        "parameters": [
+          {
+            "name": "categoryName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/search": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/categories": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product categories",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/slug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/category-list": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product category-list",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/category/{categoryName}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product category :categoryName",
+        "parameters": [
+          {
+            "name": "categoryName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/search": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          },
+          {
+            "name": "modifiedAfter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive lower bound for product `meta.updatedAt`."
+          },
+          {
+            "name": "modifiedBefore",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Inclusive upper bound for product `meta.updatedAt`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quote": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quotePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quote/{id}": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quote"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quote/random": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote random :length?",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quote"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quote/random/{length}": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote random :length?",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Number of random records; 1–10 returns that many records, other values return an empty array."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/quote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quotePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/{id}": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quote"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/random": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote random :length?",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/quote"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/random/{length}": {
+      "get": {
+        "tags": [
+          "quote"
+        ],
+        "summary": "Get quote random :length?",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Number of random records; 1–10 returns that many records, other values return an empty array."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/quote"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe/{id}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipe"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe/meal-type/{mealType}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe meal-type :mealType",
+        "parameters": [
+          {
+            "name": "mealType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe/search": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe/tag/{tag}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe tag :tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipe/tags": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe tags",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/{id}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipe"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/meal-type/{mealType}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe meal-type :mealType",
+        "parameters": [
+          {
+            "name": "mealType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/search": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/tag/{tag}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe tag :tag",
+        "parameters": [
+          {
+            "name": "tag",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recipePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/tags": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "summary": "Get recipe tags",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo/{id}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo/random": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo random :length?",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo/random/{length}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo random :length?",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Number of random records; 1–10 returns that many records, other values return an empty array."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/todo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo/user/{userId}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos/{id}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos/random": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo random :length?",
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos/random/{length}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo random :length?",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Number of random records; 1–10 returns that many records, other values return an empty array."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/todo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos/user/{userId}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Get todo user :userId",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}/carts": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId carts",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}/posts": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId posts",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}/todos": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId todos",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/filter": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user filter",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User field path to compare."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "String representation of the user field value to match."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/search": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/carts": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId carts",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cartPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/posts": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId posts",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/todos": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user :userId todos",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/todoPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/filter": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user filter",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User field path to compare."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "String representation of the user field value to match."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/search": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user search",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Case-insensitive search text."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Maximum returned records; `0` requests all remaining records. Defaults to 30."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of matching records to skip. Defaults to 0."
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record field used to sort the list."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "description": "Sort direction when `sortBy` is supplied."
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated field names. Selected responses may omit other fields; `id` is retained."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful JSON response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "product_ProductsDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "discountPercentage": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "stock": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "brand": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/product_Dimensions"
+          },
+          "warrantyInformation": {
+            "$ref": "#/components/schemas/product_WarrantyInformation"
+          },
+          "shippingInformation": {
+            "$ref": "#/components/schemas/product_ShippingInformation"
+          },
+          "availabilityStatus": {
+            "$ref": "#/components/schemas/product_AvailabilityStatus"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/product_Review"
+            }
+          },
+          "returnPolicy": {
+            "$ref": "#/components/schemas/product_ReturnPolicy"
+          },
+          "minimumOrderQuantity": {
+            "type": "integer"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/product_Meta"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "title": "ProductsDatasetElement"
+      },
+      "product_Dimensions": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "depth": {
+            "type": "number"
+          }
+        },
+        "title": "Dimensions"
+      },
+      "product_Meta": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "barcode": {
+            "type": "string"
+          },
+          "qrCode": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "title": "Meta"
+      },
+      "product_Review": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer"
+          },
+          "comment": {
+            "$ref": "#/components/schemas/product_Comment"
+          },
+          "date": {
+            "type": "string"
+          },
+          "reviewerName": {
+            "type": "string"
+          },
+          "reviewerEmail": {
+            "type": "string"
+          }
+        },
+        "title": "Review"
+      },
+      "product_AvailabilityStatus": {
+        "type": "string",
+        "title": "AvailabilityStatus"
+      },
+      "product_ReturnPolicy": {
+        "type": "string",
+        "title": "ReturnPolicy"
+      },
+      "product_Comment": {
+        "type": "string",
+        "title": "Comment"
+      },
+      "product_ShippingInformation": {
+        "type": "string",
+        "title": "ShippingInformation"
+      },
+      "product_WarrantyInformation": {
+        "type": "string",
+        "title": "WarrantyInformation"
+      },
+      "product": {
+        "$ref": "#/components/schemas/product_ProductsDatasetElement"
+      },
+      "user_UsersDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "maidenName": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/user_Gender"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Sensitive field returned by the pinned dataset; do not log or persist unnecessarily."
+          },
+          "birthDate": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri"
+          },
+          "bloodGroup": {
+            "$ref": "#/components/schemas/user_BloodGroup"
+          },
+          "height": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "eyeColor": {
+            "$ref": "#/components/schemas/user_EyeColor"
+          },
+          "hair": {
+            "$ref": "#/components/schemas/user_Hair"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/user_Address"
+          },
+          "macAddress": {
+            "type": "string"
+          },
+          "university": {
+            "type": "string"
+          },
+          "bank": {
+            "$ref": "#/components/schemas/user_Bank"
+          },
+          "company": {
+            "$ref": "#/components/schemas/user_Company"
+          },
+          "ein": {
+            "type": "string"
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Sensitive field returned by the pinned dataset; do not log or persist unnecessarily."
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "crypto": {
+            "$ref": "#/components/schemas/user_Crypto"
+          },
+          "role": {
+            "$ref": "#/components/schemas/user_Role"
+          }
+        },
+        "title": "UsersDatasetElement"
+      },
+      "user_Address": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "$ref": "#/components/schemas/user_City"
+          },
+          "state": {
+            "type": "string"
+          },
+          "stateCode": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/user_Coordinates"
+          },
+          "country": {
+            "$ref": "#/components/schemas/user_Country"
+          }
+        },
+        "title": "Address"
+      },
+      "user_Coordinates": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
+          }
+        },
+        "title": "Coordinates"
+      },
+      "user_Bank": {
+        "type": "object",
+        "properties": {
+          "cardExpire": {
+            "type": "string"
+          },
+          "cardNumber": {
+            "type": "string"
+          },
+          "cardType": {
+            "$ref": "#/components/schemas/user_CardType"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/user_Currency"
+          },
+          "iban": {
+            "type": "string"
+          }
+        },
+        "title": "Bank"
+      },
+      "user_Company": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "$ref": "#/components/schemas/user_Department"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/user_Address"
+          }
+        },
+        "title": "Company"
+      },
+      "user_Crypto": {
+        "type": "object",
+        "properties": {
+          "coin": {
+            "$ref": "#/components/schemas/user_Coin"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/user_Wallet"
+          },
+          "network": {
+            "$ref": "#/components/schemas/user_Network"
+          }
+        },
+        "title": "Crypto"
+      },
+      "user_Hair": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/user_Color"
+          },
+          "type": {
+            "$ref": "#/components/schemas/user_Type"
+          }
+        },
+        "title": "Hair"
+      },
+      "user_City": {
+        "type": "string",
+        "title": "City"
+      },
+      "user_Country": {
+        "type": "string",
+        "title": "Country"
+      },
+      "user_CardType": {
+        "type": "string",
+        "title": "CardType"
+      },
+      "user_Currency": {
+        "type": "string",
+        "title": "Currency"
+      },
+      "user_BloodGroup": {
+        "type": "string",
+        "title": "BloodGroup"
+      },
+      "user_Department": {
+        "type": "string",
+        "title": "Department"
+      },
+      "user_Coin": {
+        "type": "string",
+        "title": "Coin"
+      },
+      "user_Network": {
+        "type": "string",
+        "title": "Network"
+      },
+      "user_Wallet": {
+        "type": "string",
+        "title": "Wallet"
+      },
+      "user_EyeColor": {
+        "type": "string",
+        "title": "EyeColor"
+      },
+      "user_Gender": {
+        "type": "string",
+        "title": "Gender"
+      },
+      "user_Color": {
+        "type": "string",
+        "title": "Color"
+      },
+      "user_Type": {
+        "type": "string",
+        "title": "Type"
+      },
+      "user_Role": {
+        "type": "string",
+        "title": "Role"
+      },
+      "user": {
+        "$ref": "#/components/schemas/user_UsersDatasetElement"
+      },
+      "cart_CartsDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/cart_Product"
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "discountedTotal": {
+            "type": "number"
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "totalProducts": {
+            "type": "integer"
+          },
+          "totalQuantity": {
+            "type": "integer"
+          }
+        },
+        "title": "CartsDatasetElement"
+      },
+      "cart_Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "number"
+          },
+          "discountPercentage": {
+            "type": "number"
+          },
+          "discountedTotal": {
+            "type": "number"
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "title": "Product"
+      },
+      "cart": {
+        "$ref": "#/components/schemas/cart_CartsDatasetElement"
+      },
+      "post_PostsDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reactions": {
+            "$ref": "#/components/schemas/post_Reactions"
+          },
+          "views": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "integer"
+          }
+        },
+        "title": "PostsDatasetElement"
+      },
+      "post_Reactions": {
+        "type": "object",
+        "properties": {
+          "likes": {
+            "type": "integer"
+          },
+          "dislikes": {
+            "type": "integer"
+          }
+        },
+        "title": "Reactions"
+      },
+      "post": {
+        "$ref": "#/components/schemas/post_PostsDatasetElement"
+      },
+      "comment_CommentsDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "body": {
+            "type": "string"
+          },
+          "postId": {
+            "type": "integer"
+          },
+          "likes": {
+            "type": "integer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/comment_User"
+          }
+        },
+        "title": "CommentsDatasetElement"
+      },
+      "comment_User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          }
+        },
+        "title": "User"
+      },
+      "comment": {
+        "$ref": "#/components/schemas/comment_CommentsDatasetElement"
+      },
+      "todo_TodosDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "todo": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "integer"
+          }
+        },
+        "title": "TodosDatasetElement"
+      },
+      "todo": {
+        "$ref": "#/components/schemas/todo_TodosDatasetElement"
+      },
+      "recipe_RecipesDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "instructions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "prepTimeMinutes": {
+            "type": "integer"
+          },
+          "cookTimeMinutes": {
+            "type": "integer"
+          },
+          "servings": {
+            "type": "integer"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/recipe_Difficulty"
+          },
+          "cuisine": {
+            "type": "string"
+          },
+          "caloriesPerServing": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reviewCount": {
+            "type": "integer"
+          },
+          "mealType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "title": "RecipesDatasetElement"
+      },
+      "recipe_Difficulty": {
+        "type": "string",
+        "title": "Difficulty"
+      },
+      "recipe": {
+        "$ref": "#/components/schemas/recipe_RecipesDatasetElement"
+      },
+      "quote_QuotesDatasetElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "quote": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          }
+        },
+        "title": "QuotesDatasetElement"
+      },
+      "quote": {
+        "$ref": "#/components/schemas/quote_QuotesDatasetElement"
+      },
+      "productPage": {
+        "type": "object",
+        "required": [
+          "products",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/product"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "userPage": {
+        "type": "object",
+        "required": [
+          "users",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/user"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "cartPage": {
+        "type": "object",
+        "required": [
+          "carts",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "carts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/cart"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "postPage": {
+        "type": "object",
+        "required": [
+          "posts",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/post"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "commentPage": {
+        "type": "object",
+        "required": [
+          "comments",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/comment"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "todoPage": {
+        "type": "object",
+        "required": [
+          "todos",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "todos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/todo"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "recipePage": {
+        "type": "object",
+        "required": [
+          "recipes",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "recipes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/recipe"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "quotePage": {
+        "type": "object",
+        "required": [
+          "quotes",
+          "total",
+          "skip",
+          "limit"
+        ],
+        "properties": {
+          "quotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/quote"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "skip": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Effective returned item count, not necessarily the requested limit."
+          }
+        }
+      },
+      "slug": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
