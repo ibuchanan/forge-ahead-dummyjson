@@ -1,6 +1,103 @@
-import createClient from "openapi-fetch";
+import api from "@forge/api";
+import {
+  err,
+  ok,
+  problemResult,
+  toProblemDetails,
+  type ProblemDetails,
+  type Result,
+} from "@forge-ahead/errors";
+import createClient, {
+  type FetchResponse,
+  type MaybeOptionalInit,
+} from "openapi-fetch";
+import type { paths } from "./generated";
 
-/** Create an openapi-fetch client for DummyJSON, optionally typed with generated API paths. */
-export function createDummyJSONClient<Paths extends object = object>() {
-  return createClient<Paths>({ baseUrl: "https://dummyjson.com" });
+type GetOptions<Path extends keyof paths> = Omit<
+  NonNullable<MaybeOptionalInit<paths[Path], "get">>,
+  "baseUrl" | "fetch" | "Request" | "parseAs" | "method"
+>;
+type Get = <Path extends keyof paths>(
+  path: Path,
+  ...init: undefined extends MaybeOptionalInit<paths[Path], "get">
+    ? [options?: GetOptions<Path>]
+    : [options: GetOptions<Path>]
+) => Promise<
+  Result<
+    Extract<
+      FetchResponse<paths[Path]["get"], object, "application/json">,
+      { data: unknown }
+    >["data"],
+    ProblemDetails
+  >
+>;
+
+/** Create a GET-only DummyJSON client for a Forge backend. */
+export function createDummyJSONClient(): { GET: Get } {
+  const client = createClient<paths>({ baseUrl: "https://dummyjson.com" });
+  return {
+    GET: (async (path: keyof paths, options?: Record<string, unknown>) => {
+      let status: number | undefined;
+      try {
+        const requestOptions = { ...options };
+        for (const key of [
+          "baseUrl",
+          "fetch",
+          "Request",
+          "parseAs",
+          "method",
+        ]) {
+          delete requestOptions[key];
+        }
+        const result = await (
+          client.GET as (
+            path: keyof paths,
+            options?: unknown,
+          ) => Promise<{
+            data?: unknown;
+            error?: unknown;
+            response: Response;
+          }>
+        )(path, {
+          ...requestOptions,
+          fetch: async (request: Request) => {
+            if (new URL(request.url).origin !== "https://dummyjson.com") {
+              throw new Error(
+                "DummyJSON requests must target https://dummyjson.com",
+              );
+            }
+            const response = await api.fetch(request.url, {
+              method: request.method,
+              headers: Object.fromEntries(request.headers),
+              signal: request.signal,
+            });
+            status = response.status;
+            // Forge's Response has the methods used by openapi-fetch, but its declared type is narrower.
+            return response as unknown as Response;
+          },
+        });
+        if (!result.response.ok) {
+          return err({
+            ...toProblemDetails(
+              result.error,
+              result.response.status,
+              `GET ${path} failed`,
+            ),
+            status: result.response.status,
+          });
+        }
+        if (result.data === undefined) {
+          return err({
+            ...toProblemDetails("Empty JSON response"),
+            status: result.response.status,
+          });
+        }
+        return ok(result.data);
+      } catch (error) {
+        return status !== undefined
+          ? err({ ...toProblemDetails(error), status })
+          : problemResult(error);
+      }
+    }) as Get,
+  };
 }
