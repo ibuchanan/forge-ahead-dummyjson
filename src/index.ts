@@ -48,6 +48,82 @@ export function planRemainingPages(page: {
   }
   return ok(pages);
 }
+/** An offset page not yet processed by the host. */
+type QueuePageOffset = { skip: number; limit: number };
+type CompletedBatch = { offsets: QueuePageOffset[]; jobId: string };
+type EnqueueError = ProblemDetails & {
+  completedBatches?: CompletedBatch[];
+  failedBatch?: { offsets: QueuePageOffset[]; failedEvents?: unknown };
+  uncertainOffsets?: QueuePageOffset[];
+  nextUnattemptedOffset?: QueuePageOffset;
+};
+
+/**
+ * Push planned offsets using a host-owned Forge queue, up to maxEvents per call.
+ * Only a successful result's nextOffset is a resume cursor. On failure, reconcile
+ * the uncertain failed batch before using nextUnattemptedOffset; do not replay it
+ * blindly. The host owns persistence, retries, and idempotent processing.
+ */
+export async function enqueueRemainingPages(
+  queue: {
+    push(
+      events: { body: Record<string, unknown> }[],
+    ): Promise<{ jobId: string }>;
+  },
+  pages: QueuePageOffset[],
+  buildEvent: (offset: QueuePageOffset) => { body: Record<string, unknown> },
+  options: { maxEvents: number },
+): Promise<
+  Result<
+    {
+      completedBatches: CompletedBatch[];
+      nextOffset: QueuePageOffset | undefined;
+    },
+    EnqueueError
+  >
+> {
+  if (!Number.isSafeInteger(options.maxEvents) || options.maxEvents <= 0) {
+    return err(
+      toProblemDetails("Invalid maxEvents: must be a positive safe integer"),
+    );
+  }
+  const completedBatches: { offsets: QueuePageOffset[]; jobId: string }[] = [];
+  const count = Math.min(pages.length, options.maxEvents);
+  for (let start = 0; start < count; start += 50) {
+    const offsets = pages.slice(start, Math.min(start + 50, count));
+    let events: { body: Record<string, unknown> }[];
+    try {
+      events = offsets.map(buildEvent);
+    } catch (error) {
+      return err({
+        ...toProblemDetails(error),
+        completedBatches,
+        nextUnattemptedOffset: offsets[0],
+      });
+    }
+    try {
+      const { jobId } = await queue.push(events);
+      completedBatches.push({ offsets, jobId });
+    } catch (error) {
+      return err({
+        ...toProblemDetails(error),
+        completedBatches,
+        failedBatch: {
+          offsets,
+          ...(error !== null &&
+          typeof error === "object" &&
+          "failedEvents" in error
+            ? { failedEvents: error.failedEvents }
+            : {}),
+        },
+        uncertainOffsets: offsets,
+        nextUnattemptedOffset: pages[start + offsets.length],
+      });
+    }
+  }
+  return ok({ completedBatches, nextOffset: pages[count] });
+}
+
 type CollectionKey<Page> = {
   [Key in keyof Page]: Page[Key] extends readonly unknown[] ? Key : never;
 }[keyof Page];
