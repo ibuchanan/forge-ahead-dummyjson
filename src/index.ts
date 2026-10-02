@@ -13,6 +13,39 @@ import createClient, {
 } from "openapi-fetch";
 import type { paths } from "./generated";
 
+type PageOffset = { skip: number; limit: number };
+type CollectionKey<Page> = {
+  [Key in keyof Page]: Page[Key] extends readonly unknown[] ? Key : never;
+}[keyof Page];
+
+/** Fetch a raw offset page without changing its items or reported metadata. */
+export async function fetchRawPage<
+  Page extends { total: number; skip: number; limit: number },
+  Error,
+  Key extends CollectionKey<Page>,
+>(
+  fetchPage: (offset: PageOffset) => Promise<Result<Page, Error>>,
+  collection: Key,
+  offset: PageOffset,
+): Promise<
+  Result<
+    {
+      records: Page[Key];
+      total: number;
+      skip: number;
+      limit: number;
+    },
+    Error
+  >
+> {
+  return (await fetchPage(offset)).map((page) => ({
+    records: page[collection],
+    total: page.total,
+    skip: page.skip,
+    limit: page.limit,
+  }));
+}
+
 type GetOptions<Path extends keyof paths> = Omit<
   NonNullable<MaybeOptionalInit<paths[Path], "get">>,
   "baseUrl" | "fetch" | "Request" | "parseAs" | "method"
