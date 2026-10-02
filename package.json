@@ -1,6 +1,6 @@
 {
   "name": "@forge-ahead/dummyjson",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "A default client for the DummyJSON API, shared by Forge examples.",
   "keywords": [
