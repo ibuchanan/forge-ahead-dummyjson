@@ -1,0 +1,5 @@
+apis:
+  dummyjson:
+    root: specs/dummyjson.openapi.json
+    x-openapi-ts:
+      output: src/generated.ts

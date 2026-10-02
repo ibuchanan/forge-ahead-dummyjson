@@ -8,14 +8,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!dist",
-      "!scripts/*.mjs",
-      "!specs",
-      "!src/lib/generated.ts",
-      "!vendor"
-    ]
+    "includes": ["**", "!dist", "!specs", "!src/generated.ts", "!vendor"]
   },
   "formatter": {
     "enabled": true,

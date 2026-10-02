@@ -1,6 +1,5 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { $ } from "bun";
 import ts from "typescript";
 
 type JsonValue =
@@ -193,7 +192,7 @@ if (process.argv.includes("--check")) {
   process.exit(0);
 }
 if (!process.argv.includes("--draft"))
-  fail("Usage: npm run contract:check | npm run generate:contract");
+  fail("Usage: bun run contract:check | bun run generate:contract");
 
 const families: Record<string, string> = {
   product: "products",
@@ -206,75 +205,51 @@ const families: Record<string, string> = {
   quote: "quotes",
 };
 const schemas: JsonObject = {};
-const temp = mkdtempSync("tmp_rovo_contract_");
-try {
-  for (const [family, plural] of Object.entries(families)) {
-    const file = join(temp, `${family}.json`);
-    execFileSync(
-      "npm",
-      [
-        "exec",
-        "--no",
-        "--",
-        "quicktype",
-        "--lang",
-        "schema",
-        "--src",
-        `vendor/DummyJSON/database/${plural}.json`,
-        "--top-level",
-        `${plural}Dataset`,
-        "--out",
-        file,
-        "--no-date-times",
-      ],
-      { stdio: "pipe" },
-    );
-    const draft = JSON.parse(readFileSync(file, "utf8"));
-    const root = draft.items.$ref.replace("#/definitions/", "");
-    function review(value: JsonValue): JsonValue {
-      if (Array.isArray(value)) return value.map(review);
-      if (!value || typeof value !== "object") return value;
-      const result: JsonObject = {};
-      for (const [key, child] of Object.entries(value)) {
-        if (
-          [
-            "required",
-            "qt-uri-protocols",
-            "qt-uri-extensions",
-            "additionalProperties",
-            "$schema",
-          ].includes(key)
-        )
-          continue;
-        if (key === "format" && child === "integer") continue;
-        if (key === "enum") continue; // Sampled enum values cannot prove a closed vocabulary.
-        result[key] =
-          key === "$ref"
-            ? (child as string).replace(
-                "#/definitions/",
-                `#/components/schemas/${family}_`,
-              )
-            : review(child);
-      }
-      return result;
+for (const [family, plural] of Object.entries(families)) {
+  const draft =
+    await $`node_modules/.bin/quicktype --lang schema --src vendor/DummyJSON/database/${plural}.json --top-level ${plural}Dataset --no-date-times`.json();
+  const root = draft.items.$ref.replace("#/definitions/", "");
+  function review(value: JsonValue): JsonValue {
+    if (Array.isArray(value)) return value.map(review);
+    if (!value || typeof value !== "object") return value;
+    const result: JsonObject = {};
+    for (const [key, child] of Object.entries(value)) {
+      if (
+        [
+          "required",
+          "qt-uri-protocols",
+          "qt-uri-extensions",
+          "additionalProperties",
+          "$schema",
+        ].includes(key)
+      )
+        continue;
+      if (key === "format" && child === "integer") continue;
+      if (key === "enum") continue; // Sampled enum values cannot prove a closed vocabulary.
+      result[key] =
+        key === "$ref"
+          ? (child as string).replace(
+              "#/definitions/",
+              `#/components/schemas/${family}_`,
+            )
+          : review(child);
     }
-    for (const [name, schema] of Object.entries(
-      draft.definitions as Record<string, JsonValue>,
-    )) {
-      schemas[`${family}_${name}`] = review(schema);
-    }
-    schemas[family] = { $ref: `#/components/schemas/${family}_${root}` };
-    if (family === "user")
-      for (const field of ["password", "ssn"]) {
-        const properties = (schemas[`user_${root}`] as JsonObject).properties;
-        const prop = (properties as JsonObject | undefined)?.[field];
-        if (prop && typeof prop === "object" && !Array.isArray(prop))
-          prop.description =
-            "Sensitive field returned by the pinned dataset; do not log or persist unnecessarily.";
-      }
+    return result;
   }
-} finally {
-  rmSync(temp, { recursive: true, force: true });
+  for (const [name, schema] of Object.entries(
+    draft.definitions as Record<string, JsonValue>,
+  )) {
+    schemas[`${family}_${name}`] = review(schema);
+  }
+  schemas[family] = { $ref: `#/components/schemas/${family}_${root}` };
+  if (family === "user")
+    for (const field of ["password", "ssn"]) {
+      const properties = (schemas[`user_${root}`] as JsonObject).properties;
+      const prop = (properties as JsonObject | undefined)?.[field];
+      if (prop && typeof prop === "object" && !Array.isArray(prop))
+        prop.description =
+          "Sensitive field returned by the pinned dataset; do not log or persist unnecessarily.";
+    }
 }
 for (const [family, plural] of Object.entries(families)) {
   schemas[`${family}Page`] = {

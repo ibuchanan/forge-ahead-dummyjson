@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src", "test"],
-  "exclude": ["test/fixtures"],
+  "include": ["src", "test", "scripts"],
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
