@@ -14,6 +14,40 @@ import createClient, {
 import type { paths } from "./generated";
 
 type PageOffset = { skip: number; limit: number };
+
+/** Plan offset requests after an already processed first page. */
+export function planRemainingPages(page: {
+  total: number;
+  skip: number;
+  limit: number;
+}): Result<PageOffset[], ProblemDetails> {
+  for (const key of ["total", "skip", "limit"] as const) {
+    if (!Number.isSafeInteger(page[key]) || page[key] < 0) {
+      return err(
+        toProblemDetails(`Invalid ${key}: must be a nonnegative safe integer`),
+      );
+    }
+  }
+  if (page.limit === 0 && page.skip < page.total) {
+    return err(
+      toProblemDetails("Invalid limit: page cannot advance before total"),
+    );
+  }
+  const pages: PageOffset[] = [];
+  let skip = page.skip;
+  while (skip < page.total) {
+    if (skip > Number.MAX_SAFE_INTEGER - page.limit) {
+      return err(
+        toProblemDetails(
+          "Invalid offset: advancing would overflow a safe integer",
+        ),
+      );
+    }
+    skip += page.limit;
+    if (skip < page.total) pages.push({ skip, limit: page.limit });
+  }
+  return ok(pages);
+}
 type CollectionKey<Page> = {
   [Key in keyof Page]: Page[Key] extends readonly unknown[] ? Key : never;
 }[keyof Page];
