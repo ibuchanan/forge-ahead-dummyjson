@@ -4,26 +4,28 @@ This guide covers the local development loop for `@forge-ahead/dummyjson`. The p
 
 ## Setup
 
-Use Node.js 22 or newer and npm:
+Use [Bun](https://bun.sh) 1.4 or newer. The package targets Node.js 22+ at
+runtime for consumers of the published package, but Bun is all you need for
+development here:
 
 ```sh
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 ## Common Scripts
 
 | Command                 | Purpose                                                        |
 | ----------------------- | -------------------------------------------------------------- |
-| `npm run build`         | Build the package with `tsdown`.                               |
-| `npm run dev`           | Rebuild with `tsdown --watch`.                                  |
-| `npm run check`         | Run formatting, lint, TypeScript, tests, and the production build. |
-| `npm run format`        | Format files with Biome.                                       |
-| `npm run lint:fix`      | Apply Biome lint fixes.                                        |
-| `npm test`              | Run the Vitest test suite once.                                |
-| `npm run test:watch`    | Run Vitest in watch mode.                                      |
-| `npm run test:coverage` | Run Vitest with coverage reporting.                            |
-| `npm run changelog`     | Generate changelog output with `git-cliff`.                    |
+| `bun run build`         | Build the package with `scripts/build.ts` (Bun bundler for `dist/*.mjs`/`dist/*.cjs`, `tsc` for declarations). |
+| `bun run dev`           | Rebuild on change with `bun --watch scripts/build.ts`.                 |
+| `bun run check`         | Run formatting, lint, TypeScript, tests, and the production build. |
+| `bun run format`        | Format files with Biome.                                       |
+| `bun run lint:fix`      | Apply Biome lint fixes.                                        |
+| `bun test`              | Run the `bun test` suite once.                                 |
+| `bun run test:watch`    | Run `bun test` in watch mode.                                  |
+| `bun run test:coverage` | Run `bun test` with coverage reporting.                        |
+| `bun run changelog`     | Generate changelog output with `git-cliff`.                    |
 
 ## Maintenance
 
@@ -34,14 +36,13 @@ Keep the package focused on reusable DummyJSON client behavior used by Forge exa
 Initialize the pinned source with
 `git submodule update --init vendor/DummyJSON`. Keep it at the reviewed
 commit recorded by the repository gitlink; review upstream changes and the
-route inventory before deliberately updating that pin. Run `npm run build`
-so `scripts/generate-contract.mjs` and `scripts/check-generated.mjs` are
-current, then `npm run generate:contract` to draft
-`specs/dummyjson.openapi.json` from the pinned routes and local datasets.
+route inventory before deliberately updating that pin. Run
+`bun run generate:contract` to draft `specs/dummyjson.openapi.json` from the
+pinned routes and local datasets.
 Review its diff (especially optional fields
-and sensitive user data), then run `npm run generate:types` to update
-`src/lib/generated.ts`. Commit reviewed changes to both files and run
-`npm run contract:check`. Routine builds and checks do **not** regenerate the
+and sensitive user data), then run `bun run generate:types` to update
+`src/generated.ts`. Commit reviewed changes to both files and run
+`bun run contract:check`. Routine builds and checks do **not** regenerate the
 contract or call the live API. See
 [contract generation](specs/contract-generation.md) for review criteria.
 
@@ -96,7 +97,8 @@ and own retry policy, rate pacing, checkpoint persistence, and any
 continuation invocation. The package does not configure permissions, queue
 consumers, Assets/Jira mappings, or retries.
 
-Run `npm run build && npm run test:consumer` to check the CommonJS/Node
-package-root consumer and ESM/CommonJS entries without a live API call.
+Run `bun run pack:check` to verify the packed file list plus `package.json`
+shape (`publint`) and that declaration files resolve correctly under every
+module-resolution mode a consumer might use (`@arethetypeswrong/cli`).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
