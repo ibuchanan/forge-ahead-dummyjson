@@ -11,7 +11,9 @@ npm install
 npm run check
 ```
 
-Run `npm run build` to build the package without running the full check suite. See [DEVELOPMENT.md](DEVELOPMENT.md) for the development workflow.
+Run `npm run build` to build without the full check suite. See
+[DEVELOPMENT.md](DEVELOPMENT.md) for the development workflow, explicit
+contract regeneration, and Forge host egress and queue wiring.
 
 ## DummyJSON
 

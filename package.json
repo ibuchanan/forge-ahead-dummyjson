@@ -39,7 +39,7 @@
   "scripts": {
     "build": "tsdown",
     "changelog": "touch CHANGELOG.md && git cliff --offline --unreleased --prepend CHANGELOG.md",
-    "check": "npm run contract:check && npm run format:check && npm run lint:check && npm run typecheck && npm run test && npm run build",
+    "check": "npm run contract:check && npm run format:check && npm run lint:check && npm run typecheck && npm run test && npm run build && npm run test:consumer",
     "clean": "rm -rf ./node_modules && rm package-lock.json && rm -rf ./dist && rm -rf .cocoindex_code",
     "dev": "tsdown --watch",
     "generate:contract": "node scripts/generate-contract.mjs --draft",
@@ -56,6 +56,7 @@
     "release:prepare": "scripts/release-prepare.sh",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:consumer": "node scripts/check-consumer.mjs",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
   },
