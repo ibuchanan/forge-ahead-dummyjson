@@ -19,7 +19,7 @@ try {
   symlinkSync(packageRoot, link, "dir");
   for (const file of ["consumer.ts", "consumer.mts"]) {
     copyFileSync(
-      resolve(packageRoot, "fixtures/consumer-cjs/consumer.ts"),
+      resolve(packageRoot, "test/fixtures/consumer-cjs/consumer.ts"),
       resolve(fixture, file),
     );
   }

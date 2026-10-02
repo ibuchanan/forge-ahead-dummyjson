@@ -3,15 +3,39 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
 
-const inventory = JSON.parse(
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+type JsonObject = { [key: string]: JsonValue };
+
+type RouteInventory = Record<
+  string,
+  {
+    mounts: string[];
+    routes: [string, string, string, string?][];
+  }
+>;
+interface ReviewedRoute {
+  family: string;
+  suffix: string;
+  shape: string;
+  query: string;
+  responseFamily: string;
+}
+
+const inventory: RouteInventory = JSON.parse(
   readFileSync("specs/reviewed-routes.json", "utf8"),
 );
 const contractFile = "specs/dummyjson.openapi.json";
 const sources = "vendor/DummyJSON/src/routes";
-const fail = (message) => {
+const fail = (message: string): never => {
   throw new Error(message);
 };
-const parse = (file) => {
+const parse = (file: string) => {
   const ast = ts.createSourceFile(
     file,
     readFileSync(file, "utf8"),
@@ -19,36 +43,41 @@ const parse = (file) => {
     true,
     ts.ScriptKind.JS,
   );
-  if (ast.parseDiagnostics.length)
-    fail(`Cannot parse ${file}: ${ast.parseDiagnostics[0].messageText}`);
+  const diagnostics = (ast as { parseDiagnostics?: { messageText: string }[] })
+    .parseDiagnostics;
+  if (diagnostics?.length)
+    fail(`Cannot parse ${file}: ${diagnostics[0].messageText}`);
   return ast;
 };
-const literal = (node, file) =>
+const literal = (node: ts.Node, file: string): string =>
   ts.isStringLiteral(node)
     ? node.text
     : fail(`Unsupported dynamic path in ${file}: ${node.getText()}`);
-const callKind = (node) =>
+const callKind = (node: ts.Node): string | undefined =>
   ts.isCallExpression(node) &&
   ts.isPropertyAccessExpression(node.expression) &&
   node.expression.expression.getText() === "router"
     ? node.expression.name.text
     : undefined;
-function calls(file, visitor) {
+function calls(
+  file: string,
+  visitor: (node: ts.CallExpression, kind: string, file: string) => void,
+) {
   const ast = parse(file);
-  const walk = (node) => {
+  const walk = (node: ts.Node) => {
     if (
       ts.isCallExpression(node) &&
       ts.isElementAccessExpression(node.expression) &&
       node.expression.expression.getText() === "router"
     )
       fail(`Unsupported computed router call in ${file}: ${node.getText()}`);
-    if (ts.isCallExpression(node) && callKind(node))
-      visitor(node, callKind(node), file);
+    const kind = ts.isCallExpression(node) ? callKind(node) : undefined;
+    if (ts.isCallExpression(node) && kind) visitor(node, kind, file);
     ts.forEachChild(node, walk);
   };
   walk(ast);
 }
-function expand(prefix, suffix) {
+function expand(prefix: string, suffix: string): string[] {
   if (!/^\/(?:[A-Za-z0-9/-]|:[A-Za-z][A-Za-z0-9_]*\??)*$/.test(suffix))
     fail(`Unsupported route syntax: ${suffix}`);
   if (
@@ -64,8 +93,8 @@ function expand(prefix, suffix) {
     path.replace(/:([A-Za-z][A-Za-z0-9_]*)/g, "{$1}"),
   );
 }
-function discover() {
-  const mounts = new Map();
+function discover(): Set<string> {
+  const mounts = new Map<string, string[]>();
   calls(`${sources}/index.js`, (node, kind, file) => {
     if (kind !== "use") return;
     const target = node.arguments[1]?.getText();
@@ -77,11 +106,13 @@ function discover() {
         fail(`Unsupported mount for ${family} in ${file}`);
       mounts.set(
         family,
-        paths.elements.map((element) => literal(element, file)),
+        (paths as ts.ArrayLiteralExpression).elements.map((element) =>
+          literal(element, file),
+        ),
       );
     }
   });
-  const paths = new Set();
+  const paths = new Set<string>();
   for (const family of Object.keys(inventory)) {
     const file = `${sources}/${family}.js`;
     const prefixes = mounts.get(family) ?? fail(`Missing mount: ${family}`);
@@ -108,8 +139,8 @@ function discover() {
   }
   return paths;
 }
-function reviewed() {
-  const paths = new Map();
+function reviewed(): Map<string, ReviewedRoute> {
+  const paths = new Map<string, ReviewedRoute>();
   for (const [family, { mounts, routes }] of Object.entries(inventory)) {
     for (const [suffix, shape, query, responseFamily] of routes)
       for (const mount of mounts) {
@@ -127,7 +158,7 @@ function reviewed() {
   }
   return paths;
 }
-function compare(actual, expected, label) {
+function compare(actual: Set<string>, expected: Set<string>, label: string) {
   const missing = [...expected].filter((path) => !actual.has(path)).sort();
   const extra = [...actual].filter((path) => !expected.has(path)).sort();
   if (missing.length || extra.length)
@@ -145,7 +176,9 @@ if (sourcePaths.size !== 84)
   fail(`Expected 84 concrete paths; found ${sourcePaths.size}`);
 
 if (process.argv.includes("--check")) {
-  const existing = JSON.parse(readFileSync(contractFile, "utf8"));
+  const existing = JSON.parse(readFileSync(contractFile, "utf8")) as {
+    paths: Record<string, Record<string, unknown>>;
+  };
   compare(
     new Set(Object.keys(existing.paths)),
     sourcePaths,
@@ -162,7 +195,7 @@ if (process.argv.includes("--check")) {
 if (!process.argv.includes("--draft"))
   fail("Usage: npm run contract:check | npm run generate:contract");
 
-const families = {
+const families: Record<string, string> = {
   product: "products",
   user: "users",
   cart: "carts",
@@ -172,7 +205,7 @@ const families = {
   recipe: "recipes",
   quote: "quotes",
 };
-const schemas = {};
+const schemas: JsonObject = {};
 const temp = mkdtempSync("tmp_rovo_contract_");
 try {
   for (const [family, plural] of Object.entries(families)) {
@@ -198,10 +231,10 @@ try {
     );
     const draft = JSON.parse(readFileSync(file, "utf8"));
     const root = draft.items.$ref.replace("#/definitions/", "");
-    function review(value) {
+    function review(value: JsonValue): JsonValue {
       if (Array.isArray(value)) return value.map(review);
       if (!value || typeof value !== "object") return value;
-      const result = {};
+      const result: JsonObject = {};
       for (const [key, child] of Object.entries(value)) {
         if (
           [
@@ -217,19 +250,25 @@ try {
         if (key === "enum") continue; // Sampled enum values cannot prove a closed vocabulary.
         result[key] =
           key === "$ref"
-            ? child.replace("#/definitions/", `#/components/schemas/${family}_`)
+            ? (child as string).replace(
+                "#/definitions/",
+                `#/components/schemas/${family}_`,
+              )
             : review(child);
       }
       return result;
     }
-    for (const [name, schema] of Object.entries(draft.definitions)) {
+    for (const [name, schema] of Object.entries(
+      draft.definitions as Record<string, JsonValue>,
+    )) {
       schemas[`${family}_${name}`] = review(schema);
     }
     schemas[family] = { $ref: `#/components/schemas/${family}_${root}` };
     if (family === "user")
       for (const field of ["password", "ssn"]) {
-        const prop = schemas[`user_${root}`].properties?.[field];
-        if (prop)
+        const properties = (schemas[`user_${root}`] as JsonObject).properties;
+        const prop = (properties as JsonObject | undefined)?.[field];
+        if (prop && typeof prop === "object" && !Array.isArray(prop))
           prop.description =
             "Sensitive field returned by the pinned dataset; do not log or persist unnecessarily.";
       }
@@ -264,7 +303,14 @@ schemas.slug = {
     url: { type: "string" },
   },
 };
-const queryDefinitions = {
+interface QueryParamDef {
+  type: string;
+  description: string;
+  minimum?: number;
+  enum?: string[];
+  format?: string;
+}
+const queryDefinitions: Record<string, QueryParamDef> = {
   limit: {
     type: "integer",
     minimum: 0,
@@ -307,7 +353,7 @@ const queryDefinitions = {
     description: "Inclusive upper bound for product `meta.updatedAt`.",
   },
 };
-const queryGroups = {
+const queryGroups: Record<string, string[]> = {
   page: ["limit", "skip", "sortBy", "order", "select"],
   offset: ["limit", "skip"],
   offsetSelect: ["limit", "skip", "select"],
@@ -334,22 +380,31 @@ const queryGroups = {
     "modifiedBefore",
   ],
 };
-const paths = {};
+interface Parameter {
+  name: string;
+  in: "path" | "query";
+  required: boolean;
+  schema: unknown;
+  description?: string;
+}
+const paths: Record<string, unknown> = {};
 for (const [path, { family, suffix, shape, query, responseFamily }] of [
   ...reviewedPaths,
 ].sort(([a], [b]) => a.localeCompare(b))) {
-  const parameters = [...path.matchAll(/\{([^}]+)\}/g)].map(([, name]) => ({
-    name,
-    in: "path",
-    required: true,
-    schema:
-      name === "id" ||
-      name === "userId" ||
-      name === "postId" ||
-      name === "length"
-        ? { type: "integer", minimum: 1 }
-        : { type: "string" },
-  }));
+  const parameters: Parameter[] = [...path.matchAll(/\{([^}]+)\}/g)].map(
+    ([, name]) => ({
+      name,
+      in: "path",
+      required: true,
+      schema:
+        name === "id" ||
+        name === "userId" ||
+        name === "postId" ||
+        name === "length"
+          ? { type: "integer", minimum: 1 }
+          : { type: "string" },
+    }),
+  );
   for (const name of queryGroups[query] ?? [])
     parameters.push({
       name,
@@ -363,10 +418,14 @@ for (const [path, { family, suffix, shape, query, responseFamily }] of [
       description: queryDefinitions[name].description,
     });
   if (query && !queryGroups[query]) fail(`Unreviewed query group: ${query}`);
-  if (path.includes("{length}"))
-    parameters.find((param) => param.name === "length").description =
+  if (path.includes("{length}")) {
+    const lengthParam =
+      parameters.find((param) => param.name === "length") ??
+      fail(`Missing length parameter for ${path}`);
+    lengthParam.description =
       "Number of random records; 1–10 returns that many records, other values return an empty array.";
-  let response;
+  }
+  let response: unknown;
   if (shape === "page")
     response = { $ref: `#/components/schemas/${responseFamily}Page` };
   else if (

@@ -34,11 +34,13 @@ Keep the package focused on reusable DummyJSON client behavior used by Forge exa
 Initialize the pinned source with
 `git submodule update --init vendor/DummyJSON`. Keep it at the reviewed
 commit recorded by the repository gitlink; review upstream changes and the
-route inventory before deliberately updating that pin. Run
-`npm run generate:contract` to draft `specs/dummyjson.openapi.json` from the
-pinned routes and local datasets. Review its diff (especially optional fields
+route inventory before deliberately updating that pin. Run `npm run build`
+so `scripts/generate-contract.mjs` and `scripts/check-generated.mjs` are
+current, then `npm run generate:contract` to draft
+`specs/dummyjson.openapi.json` from the pinned routes and local datasets.
+Review its diff (especially optional fields
 and sensitive user data), then run `npm run generate:types` to update
-`src/generated.ts`. Commit reviewed changes to both files and run
+`src/lib/generated.ts`. Commit reviewed changes to both files and run
 `npm run contract:check`. Routine builds and checks do **not** regenerate the
 contract or call the live API. See
 [contract generation](specs/contract-generation.md) for review criteria.

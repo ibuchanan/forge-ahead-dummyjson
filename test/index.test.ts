@@ -1,7 +1,7 @@
 import api from "@forge/api";
 import type { ProblemDetails, Result } from "@forge-ahead/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createDummyJSONClient } from "../src/index";
+import { createDummyJSONClient } from "../src/lib/index";
 
 vi.mock("@forge/api", () => ({ default: { fetch: vi.fn() } }));
 const fetchMock = vi.mocked(api.fetch);

@@ -19,7 +19,8 @@ try {
     { stdio: "pipe" },
   );
   if (
-    readFileSync(output, "utf8") !== readFileSync("src/generated.ts", "utf8")
+    readFileSync(output, "utf8") !==
+    readFileSync("src/lib/generated.ts", "utf8")
   ) {
     throw new Error(
       "Generated endpoint types are stale; run npm run generate:types",

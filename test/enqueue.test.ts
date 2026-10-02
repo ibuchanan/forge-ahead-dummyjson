@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { enqueueRemainingPages } from "../src/index";
+import { enqueueRemainingPages } from "../src/lib/index";
 
 const pages = [
   { skip: 5, limit: 5 },

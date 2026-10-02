@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { planRemainingPages } from "../src/index";
+import { planRemainingPages } from "../src/lib/index";
 
 it("plans only the pages after the processed first page", () => {
   const result = planRemainingPages({ total: 12, skip: 0, limit: 5 });

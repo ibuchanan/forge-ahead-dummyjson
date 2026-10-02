@@ -6,7 +6,7 @@ import {
   type Result,
 } from "@forge-ahead/errors";
 import { expect, it, vi } from "vitest";
-import { fetchRawPage } from "../src/index";
+import { fetchRawPage } from "../src/lib/index";
 
 it("returns raw products and server-reported page metadata", async () => {
   const product = { id: 42, title: "Desk", extra: { color: "blue" } };

@@ -16,6 +16,9 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 dist/
+/scripts/check-consumer.mjs
+/scripts/check-generated.mjs
+/scripts/generate-contract.mjs
 coverage/
 node_modules/
 npm-debug.log*
