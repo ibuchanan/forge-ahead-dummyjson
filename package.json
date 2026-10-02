@@ -37,27 +37,28 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "bun run scripts/build.ts",
     "changelog": "touch CHANGELOG.md && git cliff --offline --unreleased --prepend CHANGELOG.md",
-    "check": "npm run build && npm run contract:check && npm run format:check && npm run lint:check && npm run typecheck && npm run test && npm run test:consumer",
-    "clean": "rm -rf ./node_modules && rm package-lock.json && rm -rf ./dist && rm -f scripts/check-consumer.mjs scripts/check-generated.mjs scripts/generate-contract.mjs && rm -rf .cocoindex_code",
-    "dev": "tsdown --watch",
-    "generate:contract": "node scripts/generate-contract.mjs --draft",
-    "generate:types": "openapi-typescript specs/dummyjson.openapi.json -o src/lib/generated.ts",
-    "contract:check": "node scripts/generate-contract.mjs --check && node scripts/check-generated.mjs",
+    "check": "lefthook run check",
+    "clean": "bun run clean:build",
+    "clean:build": "rm -rf ./dist ./coverage",
+    "clean:install": "bun run clean:build && rm -rf package-lock.json bun.lock ./node_modules ./cocoindex_code",
+    "contract:check": "bun run scripts/generate-contract.ts --check && openapi-typescript --check",
+    "contract:update": "git -C vendor/DummyJSON fetch origin && git -C vendor/DummyJSON checkout origin/HEAD",
     "format": "biome format --write",
     "format:check": "biome format",
+    "generate:contract": "bun run scripts/generate-contract.ts --draft",
+    "generate:types": "openapi-typescript",
     "lint": "lefthook run lint",
     "lint:check": "biome lint",
     "lint:fix": "biome lint --write",
-    "pack:check": "npm pack --dry-run --ignore-scripts",
-    "prepare": "npm run build && (lefthook install || true)",
-    "release:check": "npm run check && npm run test:coverage && npm run pack:check",
-    "release:prepare": "scripts/release-prepare.sh",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:consumer": "node scripts/check-consumer.mjs",
-    "test:watch": "vitest watch",
+    "pack:check": "bun run build && bun run pack:lint",
+    "pack:lint": "lefthook run pack-lint",
+    "prepare": "bun run build && (lefthook install || true)",
+    "release:prepare": "bun run scripts/release-prepare.ts",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -65,20 +66,24 @@
     "openapi-fetch": "^0.17"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18",
     "@biomejs/biome": "2.5.15",
+    "@types/bun": "^1.4",
     "@types/node": "22",
-    "@vitest/coverage-v8": "^5.0",
     "lefthook": "^2.1",
     "openapi-typescript": "^7.13",
-    "quicktype": "26.0.0",
+    "publint": "^0.3",
+    "quicktype": "^26.0",
     "tsdown": "^0.23",
-    "typescript": "^5.9",
-    "vitest": "^5.0"
+    "typescript": "^5.9"
+  },
+  "peerDependencies": {
+    "@forge/api": "^8.2.0"
   },
   "engines": {
     "node": ">=22"
   },
-  "peerDependencies": {
-    "@forge/api": "^8.2.0"
-  }
+  "trustedDependencies": [
+    "@forge-ahead/errors"
+  ]
 }

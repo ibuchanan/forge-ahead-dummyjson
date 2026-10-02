@@ -5,8 +5,8 @@ import {
   type ProblemDetails,
   type Result,
 } from "@forge-ahead/errors";
-import { expect, it, vi } from "vitest";
-import { fetchRawPage } from "../src/lib/index";
+import { expect, it, mock } from "bun:test";
+import { fetchRawPage } from "../src/index";
 
 it("returns raw products and server-reported page metadata", async () => {
   const product = { id: 42, title: "Desk", extra: { color: "blue" } };
@@ -16,7 +16,7 @@ it("returns raw products and server-reported page metadata", async () => {
     skip: 20,
     limit: 1,
   };
-  const fetchPage = vi.fn(async (_options: { skip: number; limit: number }) =>
+  const fetchPage = mock(async (_options: { skip: number; limit: number }) =>
     ok(response),
   );
 
@@ -25,7 +25,8 @@ it("returns raw products and server-reported page metadata", async () => {
     limit: 10,
   });
 
-  expect(fetchPage).toHaveBeenCalledExactlyOnceWith({ skip: 20, limit: 10 });
+  expect(fetchPage).toHaveBeenCalledTimes(1);
+  expect(fetchPage).toHaveBeenCalledWith({ skip: 20, limit: 10 });
   expect(result.isOk()).toBe(true);
   if (result.isOk()) {
     const records: typeof response.products = result.value.records;
@@ -63,7 +64,7 @@ it("returns an empty collection with the reported metadata", async () => {
 
 it("forwards a failed fetch as the same Result error without retrying", async () => {
   const problem = { ...toProblemDetails("Rate limited"), status: 429 };
-  const fetchPage = vi.fn(
+  const fetchPage = mock(
     async (_offset: {
       skip: number;
       limit: number;
@@ -85,7 +86,8 @@ it("forwards a failed fetch as the same Result error without retrying", async ()
     limit: 5,
   });
 
-  expect(fetchPage).toHaveBeenCalledExactlyOnceWith({ skip: 10, limit: 5 });
+  expect(fetchPage).toHaveBeenCalledTimes(1);
+  expect(fetchPage).toHaveBeenCalledWith({ skip: 10, limit: 5 });
   expect(result.isErr()).toBe(true);
   if (result.isErr()) expect(result.error).toBe(problem);
 });
@@ -93,7 +95,7 @@ it("forwards a failed fetch as the same Result error without retrying", async ()
 it("selects users without mapping their fields or losing the item type", async () => {
   const user = { id: 7, firstName: "Ada", custom: ["original"] };
   const response = { users: [user], total: 1, skip: 0, limit: 1 };
-  const fetchPage = vi.fn(async (_offset: { skip: number; limit: number }) =>
+  const fetchPage = mock(async (_offset: { skip: number; limit: number }) =>
     ok(response),
   );
 

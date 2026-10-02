@@ -7,25 +7,39 @@ output:
 pre-commit:
   commands:
     format:
-      run: npm run format
+      run: bun run format
       stage_fixed: true
 
 pre-push:
-  parallel: true
   commands:
     lint:
-      run: lefthook run lint
-    format:
-      run: npm run format:check
-    test:
-      run: npm run test
+      run: lefthook run check
 
 lint:
   parallel: true
   commands:
     check:
-      run: npm run lint:check
+      run: bun run lint:check
     format:
-      run: npm run format:check
+      run: bun run format:check
     typecheck:
-      run: npm run typecheck
+      run: bun run typecheck
+
+check:
+  commands:
+    lint:
+      run: lefthook run lint
+    build:
+      run: bun run pack:check
+    test:
+      run: bun run test
+
+pack-lint:
+  parallel: true
+  commands:
+    pack:
+      run: bun pm pack --dry-run --ignore-scripts
+    publint:
+      run: publint
+    attw:
+      run: attw --pack .

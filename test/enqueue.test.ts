@@ -1,5 +1,5 @@
-import { expect, it, vi } from "vitest";
-import { enqueueRemainingPages } from "../src/lib/index";
+import { expect, it, mock } from "bun:test";
+import { enqueueRemainingPages } from "../src/index";
 
 const pages = [
   { skip: 5, limit: 5 },
@@ -11,7 +11,7 @@ const buildEvent = ({ skip, limit }: { skip: number; limit: number }) => ({
 
 it("does not push when there are no remaining pages", async () => {
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job-1",
     })),
   };
@@ -35,7 +35,7 @@ it("pushes exactly 50 events in one batch", async () => {
     limit: 5,
   }));
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -44,7 +44,8 @@ it("pushes exactly 50 events in one batch", async () => {
     maxEvents: 50,
   });
 
-  expect(queue.push).toHaveBeenCalledExactlyOnceWith(offsets.map(buildEvent));
+  expect(queue.push).toHaveBeenCalledTimes(1);
+  expect(queue.push).toHaveBeenCalledWith(offsets.map(buildEvent));
   expect(result.isOk()).toBe(true);
   if (result.isOk()) expect(result.value.nextOffset).toBeUndefined();
 });
@@ -55,7 +56,7 @@ it("splits 51 offsets into at most 50 events per push", async () => {
     limit: 5,
   }));
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -79,7 +80,7 @@ it("splits 51 offsets into at most 50 events per push", async () => {
 
 it("stops at the maxEvents budget and resumes from the returned offset", async () => {
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -87,7 +88,8 @@ it("stops at the maxEvents budget and resumes from the returned offset", async (
     maxEvents: 1,
   });
 
-  expect(queue.push).toHaveBeenCalledExactlyOnceWith([buildEvent(pages[0])]);
+  expect(queue.push).toHaveBeenCalledTimes(1);
+  expect(queue.push).toHaveBeenCalledWith([buildEvent(pages[0])]);
   expect(first.isOk()).toBe(true);
   if (first.isOk()) {
     expect(first.value).toEqual({
@@ -114,7 +116,7 @@ it("honors the budget across the 50-event push boundary", async () => {
     limit: 5,
   }));
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -132,7 +134,7 @@ it("honors the budget across the 50-event push boundary", async () => {
 
 it("rejects invalid budgets without pushing", async () => {
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -158,7 +160,7 @@ it("stops on a thrown push and reports confirmed versus uncertain offsets withou
     limit: 5,
   }));
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => {
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => {
       if (queue.push.mock.calls.length === 2) throw new Error("network lost");
       return { jobId: "accepted-1" };
     }),
@@ -183,7 +185,7 @@ it("stops on a thrown push and reports confirmed versus uncertain offsets withou
 
 it("does not mark an event-builder failure as an attempted push", async () => {
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job",
     })),
   };
@@ -209,7 +211,7 @@ it("does not mark an event-builder failure as an attempted push", async () => {
 
 it("reports first-batch push failure without retries or confirmed acceptance", async () => {
   const queue = {
-    push: vi.fn(
+    push: mock(
       async (
         _events: { body: Record<string, unknown> }[],
       ): Promise<{ jobId: string }> => {
@@ -222,7 +224,8 @@ it("reports first-batch push failure without retries or confirmed acceptance", a
     maxEvents: 2,
   });
 
-  expect(queue.push).toHaveBeenCalledExactlyOnceWith(pages.map(buildEvent));
+  expect(queue.push).toHaveBeenCalledTimes(1);
+  expect(queue.push).toHaveBeenCalledWith(pages.map(buildEvent));
   expect(result.isErr()).toBe(true);
   if (result.isErr()) {
     expect(result.error.detail).toContain("rate limited");
@@ -238,7 +241,7 @@ it("identifies untouched work after a failed batch without offering a safe resum
     limit: 5,
   }));
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => {
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => {
       if (queue.push.mock.calls.length === 2) throw new Error("failed");
       return { jobId: "job-1" };
     }),
@@ -263,7 +266,7 @@ it("preserves partial-success failedEvents without claiming the other events wer
   ];
   const failure = Object.assign(new Error("partial success"), { failedEvents });
   const queue = {
-    push: vi.fn(
+    push: mock(
       async (
         _events: { body: Record<string, unknown> }[],
       ): Promise<{ jobId: string }> => {
@@ -276,7 +279,7 @@ it("preserves partial-success failedEvents without claiming the other events wer
     maxEvents: 10,
   });
 
-  expect(queue.push).toHaveBeenCalledOnce();
+  expect(queue.push).toHaveBeenCalledTimes(1);
   expect(result.isErr()).toBe(true);
   if (result.isErr()) {
     expect(result.error.failedBatch).toEqual({ offsets: pages, failedEvents });
@@ -287,7 +290,7 @@ it("preserves partial-success failedEvents without claiming the other events wer
 
 it("pushes planned remaining pages through a host-supplied queue", async () => {
   const queue = {
-    push: vi.fn(async (_events: { body: Record<string, unknown> }[]) => ({
+    push: mock(async (_events: { body: Record<string, unknown> }[]) => ({
       jobId: "job-1",
     })),
   };
@@ -296,7 +299,8 @@ it("pushes planned remaining pages through a host-supplied queue", async () => {
     maxEvents: 10,
   });
 
-  expect(queue.push).toHaveBeenCalledExactlyOnceWith(pages.map(buildEvent));
+  expect(queue.push).toHaveBeenCalledTimes(1);
+  expect(queue.push).toHaveBeenCalledWith(pages.map(buildEvent));
   expect(result.isOk()).toBe(true);
   if (result.isOk()) {
     expect(result.value).toEqual({

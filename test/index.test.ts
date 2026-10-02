@@ -1,10 +1,7 @@
-import api from "@forge/api";
 import type { ProblemDetails, Result } from "@forge-ahead/errors";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createDummyJSONClient } from "../src/lib/index";
-
-vi.mock("@forge/api", () => ({ default: { fetch: vi.fn() } }));
-const fetchMock = vi.mocked(api.fetch);
+import { beforeEach, describe, expect, it } from "bun:test";
+import { createDummyJSONClient } from "../src/index";
+import { forgeFetchMock as fetchMock } from "./setup";
 
 beforeEach(() => fetchMock.mockReset());
 
@@ -44,7 +41,7 @@ describe("createDummyJSONClient", () => {
         result;
       void wrongResult;
     }
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(new URL(String(fetchMock.mock.calls[0]?.[0]))).toHaveProperty(
       "href",
       "https://dummyjson.com/products/42?select=title",
@@ -69,7 +66,7 @@ describe("createDummyJSONClient", () => {
       params: { query: { skip: 10, limit: 5 } },
     });
 
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(
       new URL(String(fetchMock.mock.calls[0]?.[0])).searchParams.toString(),
     ).toBe("skip=10&limit=5");
@@ -86,7 +83,7 @@ describe("createDummyJSONClient", () => {
 
     const result = await createDummyJSONClient().GET("/products");
 
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.isErr()).toBe(true);
     if (result.isErr())
       expect(result.error.detail).toContain("connection refused");
@@ -97,7 +94,7 @@ describe("createDummyJSONClient", () => {
 
     const result = await createDummyJSONClient().GET("/products");
 
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.isErr()).toBe(true);
     if (result.isErr()) expect(result.error.status).toBe(200);
   });
@@ -112,7 +109,7 @@ describe("createDummyJSONClient", () => {
 
     const result = await createDummyJSONClient().GET("/products");
 
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.isErr()).toBe(true);
     if (result.isErr()) {
       expect(result.error.status).toBe(200);
