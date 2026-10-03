@@ -1,50 +1,53 @@
 {
-  "product": {
-    "mounts": ["/product", "/products"],
-    "routes": [
-      ["/", "page", "productPage"], ["/search", "page", "productSearch"],
-      ["/category-list", "strings"], ["/categories", "slugs"],
-      ["/:id", "item", "select"], ["/category/:categoryName", "page", "productPage"]
-    ]
-  },
-  "user": {
-    "mounts": ["/user", "/users"],
-    "routes": [
-      ["/", "page", "page"], ["/search", "page", "search"],
-      ["/filter", "page", "filter"], ["/:id", "item", "select"],
-      ["/:userId/carts", "page", "offset", "cart"],
-      ["/:userId/posts", "page", "offsetSelect", "post"],
-      ["/:userId/todos", "page", "offsetSelect", "todo"]
-    ]
-  },
-  "cart": {
-    "mounts": ["/cart", "/carts"],
-    "routes": [["/", "page", "page"], ["/user/:userId", "page", "page"], ["/:id", "item", "select"]]
-  },
-  "post": {
-    "mounts": ["/post", "/posts"],
-    "routes": [
-      ["/", "page", "page"], ["/search", "page", "search"],
-      ["/tag-list", "strings"], ["/tags", "slugs"],
-      ["/:id", "item", "select"], ["/tag/:tag", "page", "page"],
-      ["/user/:userId", "page", "page"],
-      ["/:postId/comments", "page", "page", "comment"]
-    ]
-  },
-  "comment": {
-    "mounts": ["/comment", "/comments"],
-    "routes": [["/", "page", "page"], ["/:id", "item", "select"], ["/post/:postId", "page", "page"]]
-  },
-  "todo": {
-    "mounts": ["/todo", "/todos"],
-    "routes": [["/", "page", "page"], ["/random/:length?", "random"], ["/:id", "item", "select"], ["/user/:userId", "page", "page"]]
-  },
-  "recipe": {
-    "mounts": ["/recipe", "/recipes"],
-    "routes": [["/", "page", "page"], ["/search", "page", "search"], ["/tags", "strings"], ["/:id", "item", "select"], ["/tag/:tag", "page", "page"], ["/meal-type/:mealType", "page", "page"]]
-  },
-  "quote": {
-    "mounts": ["/quote", "/quotes"],
-    "routes": [["/", "page", "page"], ["/random/:length?", "random"], ["/:id", "item", "select"]]
+  "sourceCommit": "3d78fed5f35b7f1087db1c162edc412f2a736722",
+  "families": {
+    "product": {
+      "mounts": ["/product", "/products"],
+      "routes": [
+        ["/", "page", "productPage"], ["/search", "page", "productSearch"],
+        ["/category-list", "strings"], ["/categories", "slugs"],
+        ["/:id", "item", "select"], ["/category/:categoryName", "page", "productPage"]
+      ]
+    },
+    "user": {
+      "mounts": ["/user", "/users"],
+      "routes": [
+        ["/", "page", "page"], ["/search", "page", "search"],
+        ["/filter", "page", "filter"], ["/:id", "item", "select"],
+        ["/:userId/carts", "page", "offset", "cart"],
+        ["/:userId/posts", "page", "offsetSelect", "post"],
+        ["/:userId/todos", "page", "offsetSelect", "todo"]
+      ]
+    },
+    "cart": {
+      "mounts": ["/cart", "/carts"],
+      "routes": [["/", "page", "page"], ["/user/:userId", "page", "page"], ["/:id", "item", "select"]]
+    },
+    "post": {
+      "mounts": ["/post", "/posts"],
+      "routes": [
+        ["/", "page", "page"], ["/search", "page", "search"],
+        ["/tag-list", "strings"], ["/tags", "slugs"],
+        ["/:id", "item", "select"], ["/tag/:tag", "page", "page"],
+        ["/user/:userId", "page", "page"],
+        ["/:postId/comments", "page", "page", "comment"]
+      ]
+    },
+    "comment": {
+      "mounts": ["/comment", "/comments"],
+      "routes": [["/", "page", "page"], ["/:id", "item", "select"], ["/post/:postId", "page", "page"]]
+    },
+    "todo": {
+      "mounts": ["/todo", "/todos"],
+      "routes": [["/", "page", "page"], ["/random/:length?", "random"], ["/:id", "item", "select"], ["/user/:userId", "page", "page"]]
+    },
+    "recipe": {
+      "mounts": ["/recipe", "/recipes"],
+      "routes": [["/", "page", "page"], ["/search", "page", "search"], ["/tags", "strings"], ["/:id", "item", "select"], ["/tag/:tag", "page", "page"], ["/meal-type/:mealType", "page", "page"]]
+    },
+    "quote": {
+      "mounts": ["/quote", "/quotes"],
+      "routes": [["/", "page", "page"], ["/random/:length?", "random"], ["/:id", "item", "select"]]
+    }
   }
 }

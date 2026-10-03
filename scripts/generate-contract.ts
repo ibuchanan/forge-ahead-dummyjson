@@ -1,6 +1,12 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { $ } from "bun";
 import ts from "typescript";
+import {
+  buildOperation,
+  contractSemanticDrift,
+  type ReviewedRoute,
+} from "./contract-semantics";
 
 type JsonValue =
   | string
@@ -18,22 +24,43 @@ type RouteInventory = Record<
     routes: [string, string, string, string?][];
   }
 >;
-interface ReviewedRoute {
-  family: string;
-  suffix: string;
-  shape: string;
-  query: string;
-  responseFamily: string;
-}
 
-const inventory: RouteInventory = JSON.parse(
-  readFileSync("specs/reviewed-routes.json", "utf8"),
-);
+const inventoryDocument: {
+  sourceCommit: string;
+  families: RouteInventory;
+} = JSON.parse(readFileSync("specs/reviewed-routes.json", "utf8"));
+const inventory = inventoryDocument.families;
 const contractFile = "specs/dummyjson.openapi.json";
 const sources = "vendor/DummyJSON/src/routes";
 const fail = (message: string): never => {
   throw new Error(message);
 };
+function verifySourceCommit() {
+  if (!existsSync(`${sources}/index.js`))
+    fail(
+      "Pinned DummyJSON source is not initialized. Run `git submodule update --init vendor/DummyJSON` and retry.",
+    );
+  const actual = (() => {
+    try {
+      return execFileSync(
+        "git",
+        ["-C", "vendor/DummyJSON", "rev-parse", "HEAD"],
+        {
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "pipe"],
+        },
+      ).trim();
+    } catch {
+      return fail(
+        "Cannot read the pinned DummyJSON source commit. Run `git submodule update --init vendor/DummyJSON` and retry.",
+      );
+    }
+  })();
+  if (actual !== inventoryDocument.sourceCommit)
+    fail(
+      `Reviewed route inventory targets DummyJSON ${inventoryDocument.sourceCommit}, but the submodule is ${actual}. Review the source changes, then update specs/reviewed-routes.json.`,
+    );
+}
 const parse = (file: string) => {
   const ast = ts.createSourceFile(
     file,
@@ -168,27 +195,21 @@ function compare(actual: Set<string>, expected: Set<string>, label: string) {
     `${label}: ${actual.size}/${expected.size}, missing [], extra []`,
   );
 }
+verifySourceCommit();
 const sourcePaths = discover();
 const reviewedPaths = reviewed();
 compare(sourcePaths, new Set(reviewedPaths.keys()), "GET route coverage");
-if (sourcePaths.size !== 84)
-  fail(`Expected 84 concrete paths; found ${sourcePaths.size}`);
 
 if (process.argv.includes("--check")) {
   const existing = JSON.parse(readFileSync(contractFile, "utf8")) as {
-    paths: Record<string, Record<string, unknown>>;
+    paths: Record<string, unknown>;
   };
-  compare(
-    new Set(Object.keys(existing.paths)),
-    sourcePaths,
-    "Committed contract coverage",
-  );
-  if (
-    Object.values(existing.paths).some(
-      (path) => Object.keys(path).join() !== "get",
-    )
-  )
-    fail("Non-GET operation in contract");
+  const drift = contractSemanticDrift(reviewedPaths, existing.paths);
+  if (drift.length)
+    fail(
+      `Contract semantic drift:\n${drift.map((item) => `- ${item}`).join("\n")}`,
+    );
+  console.log(`Contract semantics: ${reviewedPaths.size} routes agree`);
   process.exit(0);
 }
 if (!process.argv.includes("--draft"))
@@ -278,160 +299,11 @@ schemas.slug = {
     url: { type: "string" },
   },
 };
-interface QueryParamDef {
-  type: string;
-  description: string;
-  minimum?: number;
-  enum?: string[];
-  format?: string;
-}
-const queryDefinitions: Record<string, QueryParamDef> = {
-  limit: {
-    type: "integer",
-    minimum: 0,
-    description:
-      "Maximum returned records; `0` requests all remaining records. Defaults to 30.",
-  },
-  skip: {
-    type: "integer",
-    minimum: 0,
-    description: "Number of matching records to skip. Defaults to 0.",
-  },
-  sortBy: {
-    type: "string",
-    description: "Record field used to sort the list.",
-  },
-  order: {
-    type: "string",
-    enum: ["asc", "desc"],
-    description: "Sort direction when `sortBy` is supplied.",
-  },
-  select: {
-    type: "string",
-    description:
-      "Comma-separated field names. Selected responses may omit other fields; `id` is retained.",
-  },
-  q: { type: "string", description: "Case-insensitive search text." },
-  key: { type: "string", description: "User field path to compare." },
-  value: {
-    type: "string",
-    description: "String representation of the user field value to match.",
-  },
-  modifiedAfter: {
-    type: "string",
-    format: "date-time",
-    description: "Inclusive lower bound for product `meta.updatedAt`.",
-  },
-  modifiedBefore: {
-    type: "string",
-    format: "date-time",
-    description: "Inclusive upper bound for product `meta.updatedAt`.",
-  },
-};
-const queryGroups: Record<string, string[]> = {
-  page: ["limit", "skip", "sortBy", "order", "select"],
-  offset: ["limit", "skip"],
-  offsetSelect: ["limit", "skip", "select"],
-  select: ["select"],
-  search: ["q", "limit", "skip", "sortBy", "order", "select"],
-  filter: ["key", "value", "limit", "skip", "sortBy", "order", "select"],
-  productPage: [
-    "limit",
-    "skip",
-    "sortBy",
-    "order",
-    "select",
-    "modifiedAfter",
-    "modifiedBefore",
-  ],
-  productSearch: [
-    "q",
-    "limit",
-    "skip",
-    "sortBy",
-    "order",
-    "select",
-    "modifiedAfter",
-    "modifiedBefore",
-  ],
-};
-interface Parameter {
-  name: string;
-  in: "path" | "query";
-  required: boolean;
-  schema: unknown;
-  description?: string;
-}
 const paths: Record<string, unknown> = {};
-for (const [path, { family, suffix, shape, query, responseFamily }] of [
-  ...reviewedPaths,
-].sort(([a], [b]) => a.localeCompare(b))) {
-  const parameters: Parameter[] = [...path.matchAll(/\{([^}]+)\}/g)].map(
-    ([, name]) => ({
-      name,
-      in: "path",
-      required: true,
-      schema:
-        name === "id" ||
-        name === "userId" ||
-        name === "postId" ||
-        name === "length"
-          ? { type: "integer", minimum: 1 }
-          : { type: "string" },
-    }),
-  );
-  for (const name of queryGroups[query] ?? [])
-    parameters.push({
-      name,
-      in: "query",
-      required: false,
-      schema: Object.fromEntries(
-        Object.entries(queryDefinitions[name]).filter(
-          ([key]) => key !== "description",
-        ),
-      ),
-      description: queryDefinitions[name].description,
-    });
-  if (query && !queryGroups[query]) fail(`Unreviewed query group: ${query}`);
-  if (path.includes("{length}")) {
-    const lengthParam =
-      parameters.find((param) => param.name === "length") ??
-      fail(`Missing length parameter for ${path}`);
-    lengthParam.description =
-      "Number of random records; 1–10 returns that many records, other values return an empty array.";
-  }
-  let response: unknown;
-  if (shape === "page")
-    response = { $ref: `#/components/schemas/${responseFamily}Page` };
-  else if (
-    shape === "item" ||
-    (shape === "random" && !path.includes("{length}"))
-  )
-    response = { $ref: `#/components/schemas/${family}` };
-  else if (shape === "random")
-    response = {
-      type: "array",
-      items: { $ref: `#/components/schemas/${family}` },
-    };
-  else if (shape === "strings")
-    response = { type: "array", items: { type: "string" } };
-  else if (shape === "slugs")
-    response = { type: "array", items: { $ref: "#/components/schemas/slug" } };
-  else fail(`Unreviewed response shape ${shape}`);
-  paths[path] = {
-    get: {
-      tags: [family],
-      summary: `Get ${family} ${suffix === "/" ? "list" : suffix.replaceAll("/", " ").trim()}`,
-      ...(parameters.length ? { parameters } : {}),
-      responses: {
-        200: {
-          description: "Successful JSON response.",
-          content: { "application/json": { schema: response } },
-        },
-      },
-    },
-  };
-}
+for (const [path, route] of [...reviewedPaths].sort(([a], [b]) =>
+  a.localeCompare(b),
+))
+  paths[path] = { get: buildOperation(path, route) };
 const contract = {
   openapi: "3.1.0",
   info: {
