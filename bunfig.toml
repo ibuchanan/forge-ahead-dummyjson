@@ -1,3 +1,9 @@
+[install]
+registry = "https://registry.npmjs.org/"
+
+[install.scopes]
+"@forge" = "https://registry.npmjs.org/"
+
 [test]
 preload = ["./test/setup.ts"]
 coverage = false
