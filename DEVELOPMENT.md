@@ -51,10 +51,10 @@ run contract verification, regenerate the contract, or call the live API. See
 ### Wire a consuming Forge app
 
 The library exports typed read-only `createDummyJSONClient().GET` (Forge
-backend `api.fetch`, `Result` errors), `fetchRawPage`, `planRemainingPages`,
-and opt-in `enqueueRemainingPages`. The host must install the package and
-`@forge/api`, call the client from backend code, and declare backend egress in
-**its own** `manifest.yml`:
+backend `api.fetch`, `Result` errors), `fetchRawPage`, and opt-in
+`createRemainingPages`. The host must install the package and `@forge/api`,
+call the client from backend code, and declare backend egress in **its own**
+`manifest.yml`:
 
 ```yaml
 permissions:
@@ -81,18 +81,20 @@ modules:
 ```
 
 The host fetches and processes the **first** page itself. Pass its reported
-`total`, `skip`, and effective `limit` to `planRemainingPages`; do not enqueue
+`total`, `skip`, and effective `limit` to `createRemainingPages`; do not enqueue
 that page again. Use `fetchRawPage` for remaining pages and map/write records
 inside the host, not this package.
 
-Supply `enqueueRemainingPages` with the host's queue, event builder, and a
-positive `maxEvents` per invocation. It pushes at most 50 offsets per `push`;
-the host must additionally stay within Forge's 200 KB per-push payload limit
-and 500 events/minute installation-wide rate limit. A successful `nextOffset`
-is a cursor for host-persisted resumption. On error, reconcile
-`completedBatches`, `failedBatch`, and `uncertainOffsets` before using
-`nextUnattemptedOffset` to resume unattempted pages. Never assume a failed
-push accepted zero events.
+`createRemainingPages` returns a `Result`; on success its value exposes
+`enqueue` and `resume`. Supply `enqueue` with the host's queue, event builder,
+and a positive `maxEvents` per invocation. It pushes at most 50 offsets per
+`push`; the host must additionally stay within Forge's 200 KB per-push payload
+limit and 500 events/minute installation-wide rate limit. A successful
+`nextOffset` is a cursor for host-persisted resumption. To continue, pass that
+persisted cursor value to `resume`, which validates it against the plan before
+enqueueing. On error, reconcile `completedBatches`, `failedBatch`, and
+`uncertainOffsets` before using `nextUnattemptedOffset` to resume unattempted
+pages. Never assume a failed push accepted zero events.
 
 Queue delivery is at least once: make the host consumer's writes idempotent
 and own retry policy, rate pacing, checkpoint persistence, and any

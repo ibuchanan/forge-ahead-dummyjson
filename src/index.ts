@@ -13,10 +13,49 @@ import createClient, {
 } from "openapi-fetch";
 import type { paths } from "./generated";
 
-type PageOffset = { skip: number; limit: number };
+export type PageOffset = { skip: number; limit: number };
 
-/** Plan offset requests after an already processed first page. */
-export function planRemainingPages(page: {
+type CompletedBatch = { offsets: PageOffset[]; jobId: string };
+
+type EnqueueError = ProblemDetails & {
+  completedBatches?: CompletedBatch[];
+  failedBatch?: { offsets: PageOffset[]; failedEvents?: unknown };
+  uncertainOffsets?: PageOffset[];
+  nextUnattemptedOffset?: PageOffset;
+};
+
+type EnqueueOutcome = {
+  completedBatches: CompletedBatch[];
+  nextOffset: PageOffset | undefined;
+};
+
+type Queue = {
+  push(events: { body: Record<string, unknown> }[]): Promise<{ jobId: string }>;
+};
+
+type BuildEvent = (offset: PageOffset) => { body: Record<string, unknown> };
+
+/**
+ * Own the remaining-page continuation: plan offsets after an already processed
+ * first page, enqueue them through a host-owned Forge queue, and resume from a
+ * persisted cursor value. The host owns persistence, retries, and idempotent
+ * processing; this module owns validated, value-based continuation.
+ */
+export type RemainingPages = {
+  enqueue(
+    queue: Queue,
+    buildEvent: BuildEvent,
+    options: { maxEvents: number },
+  ): Promise<Result<EnqueueOutcome, EnqueueError>>;
+  resume(
+    cursor: PageOffset,
+    queue: Queue,
+    buildEvent: BuildEvent,
+    options: { maxEvents: number },
+  ): Promise<Result<EnqueueOutcome, EnqueueError>>;
+};
+
+function planOffsets(page: {
   total: number;
   skip: number;
   limit: number;
@@ -48,80 +87,100 @@ export function planRemainingPages(page: {
   }
   return ok(pages);
 }
-/** An offset page not yet processed by the host. */
-type QueuePageOffset = { skip: number; limit: number };
-type CompletedBatch = { offsets: QueuePageOffset[]; jobId: string };
-type EnqueueError = ProblemDetails & {
-  completedBatches?: CompletedBatch[];
-  failedBatch?: { offsets: QueuePageOffset[]; failedEvents?: unknown };
-  uncertainOffsets?: QueuePageOffset[];
-  nextUnattemptedOffset?: QueuePageOffset;
-};
 
-/**
- * Push planned offsets using a host-owned Forge queue, up to maxEvents per call.
- * Only a successful result's nextOffset is a resume cursor. On failure, reconcile
- * the uncertain failed batch before using nextUnattemptedOffset; do not replay it
- * blindly. The host owns persistence, retries, and idempotent processing.
- */
-export async function enqueueRemainingPages(
-  queue: {
-    push(
-      events: { body: Record<string, unknown> }[],
-    ): Promise<{ jobId: string }>;
-  },
-  pages: QueuePageOffset[],
-  buildEvent: (offset: QueuePageOffset) => { body: Record<string, unknown> },
+function findOffsetIndex(offsets: PageOffset[], cursor: PageOffset): number {
+  if (
+    !Number.isSafeInteger(cursor.skip) ||
+    cursor.skip < 0 ||
+    !Number.isSafeInteger(cursor.limit) ||
+    cursor.limit < 0
+  ) {
+    return -1;
+  }
+  return offsets.findIndex(
+    (offset) => offset.skip === cursor.skip && offset.limit === cursor.limit,
+  );
+}
+
+async function enqueueFrom(
+  offsets: PageOffset[],
+  queue: Queue,
+  buildEvent: BuildEvent,
   options: { maxEvents: number },
-): Promise<
-  Result<
-    {
-      completedBatches: CompletedBatch[];
-      nextOffset: QueuePageOffset | undefined;
-    },
-    EnqueueError
-  >
-> {
+): Promise<Result<EnqueueOutcome, EnqueueError>> {
   if (!Number.isSafeInteger(options.maxEvents) || options.maxEvents <= 0) {
     return err(
       toProblemDetails("Invalid maxEvents: must be a positive safe integer"),
     );
   }
-  const completedBatches: { offsets: QueuePageOffset[]; jobId: string }[] = [];
-  const count = Math.min(pages.length, options.maxEvents);
+  const completedBatches: CompletedBatch[] = [];
+  const count = Math.min(offsets.length, options.maxEvents);
   for (let start = 0; start < count; start += 50) {
-    const offsets = pages.slice(start, Math.min(start + 50, count));
+    const batch = offsets.slice(start, Math.min(start + 50, count));
     let events: { body: Record<string, unknown> }[];
     try {
-      events = offsets.map(buildEvent);
+      events = batch.map(buildEvent);
     } catch (error) {
       return err({
         ...toProblemDetails(error),
         completedBatches,
-        nextUnattemptedOffset: offsets[0],
+        nextUnattemptedOffset: batch[0],
       });
     }
     try {
       const { jobId } = await queue.push(events);
-      completedBatches.push({ offsets, jobId });
+      completedBatches.push({ offsets: batch, jobId });
     } catch (error) {
       return err({
         ...toProblemDetails(error),
         completedBatches,
         failedBatch: {
-          offsets,
+          offsets: batch,
           ...(error !== null &&
           typeof error === "object" &&
           "failedEvents" in error
             ? { failedEvents: error.failedEvents }
             : {}),
         },
-        uncertainOffsets: offsets,
-        nextUnattemptedOffset: pages[start + offsets.length],
+        uncertainOffsets: batch,
+        nextUnattemptedOffset: offsets[start + batch.length],
       });
     }
   }
-  return ok({ completedBatches, nextOffset: pages[count] });
+  return ok({ completedBatches, nextOffset: offsets[count] });
+}
+
+/**
+ * Plan and enqueue the pages after an already processed first page, and resume
+ * from a persisted cursor value. Only a successful result's nextOffset is a
+ * resume cursor. On failure, reconcile the uncertain failed batch before using
+ * nextUnattemptedOffset; do not replay it blindly. The host owns persistence,
+ * retries, and idempotent processing.
+ */
+export function createRemainingPages(page: {
+  total: number;
+  skip: number;
+  limit: number;
+}): Result<RemainingPages, ProblemDetails> {
+  const planned = planOffsets(page);
+  if (planned.isErr()) return err(planned.error);
+  const offsets = planned.value;
+
+  return ok({
+    enqueue: (queue, buildEvent, options) =>
+      enqueueFrom(offsets, queue, buildEvent, options),
+    resume: async (cursor, queue, buildEvent, options) => {
+      const index = findOffsetIndex(offsets, cursor);
+      if (index === -1) {
+        return err(
+          toProblemDetails(
+            "Invalid cursor: not a planned remaining-page offset",
+          ),
+        );
+      }
+      return enqueueFrom(offsets.slice(index), queue, buildEvent, options);
+    },
+  });
 }
 
 type CollectionKey<Page> = {
