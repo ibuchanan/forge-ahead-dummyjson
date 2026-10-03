@@ -1,3 +1,14 @@
+## What's Changed in 0.2.0
+* NONE Enforce strict publint and attw profiles
+* NONE Concentrate remaining-page continuation
+* NONE Deepen contract verification
+* NONE Note the Bun toolchain migration as unreleased
+* NONE Document the Bun-based toolchain
+* NONE Flatten src/lib and src/scripts, simplify maintenance scripts
+* NONE Replace tsdown, vitest, and npm orchestration with Bun
+
+**Full Changelog**: https://github.com/ibuchanan/forge-ahead-dummyjson/compare/v0.1.0...v0.2.0
+
 ## Unreleased
 
 **Contributor/operational note:** the dev toolchain (build, test, lint, and
