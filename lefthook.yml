@@ -40,6 +40,6 @@ pack-lint:
     pack:
       run: bun pm pack --dry-run --ignore-scripts
     publint:
-      run: publint
+      run: publint --strict
     attw:
       run: attw --pack .
