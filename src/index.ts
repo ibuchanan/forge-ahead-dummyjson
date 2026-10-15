@@ -1,4 +1,3 @@
-import api from "@forge/api";
 import {
   err,
   ok,
@@ -234,8 +233,10 @@ type Get = <Path extends keyof paths>(
   >
 >;
 
-/** Create a GET-only DummyJSON client for a Forge backend. */
-export function createDummyJSONClient(): { GET: Get } {
+/** Create a GET-only DummyJSON client with an explicitly chosen fetch transport. */
+export function createDummyJSONClient(
+  transport: (request: Request) => Promise<Response>,
+): { GET: Get } {
   const client = createClient<paths>({ baseUrl: "https://dummyjson.com" });
   return {
     GET: (async (path: keyof paths, options?: Record<string, unknown>) => {
@@ -268,14 +269,9 @@ export function createDummyJSONClient(): { GET: Get } {
                 "DummyJSON requests must target https://dummyjson.com",
               );
             }
-            const response = await api.fetch(request.url, {
-              method: request.method,
-              headers: Object.fromEntries(request.headers),
-              signal: request.signal,
-            });
+            const response = await transport(request);
             status = response.status;
-            // Forge's Response has the methods used by openapi-fetch, but its declared type is narrower.
-            return response as unknown as Response;
+            return response;
           },
         });
         if (!result.response.ok) {

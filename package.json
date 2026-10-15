@@ -2,7 +2,7 @@
   "name": "@forge-ahead/dummyjson",
   "version": "0.2.0",
   "private": true,
-  "description": "A default client for the DummyJSON API, shared by Forge examples.",
+  "description": "A runtime-neutral, typed DummyJSON client with a Forge backend adapter.",
   "keywords": [
     "atlassian",
     "forge",
@@ -27,6 +27,16 @@
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
+      }
+    },
+    "./forge": {
+      "import": {
+        "types": "./dist/forge.d.mts",
+        "default": "./dist/forge.mjs"
+      },
+      "require": {
+        "types": "./dist/forge.d.cts",
+        "default": "./dist/forge.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -68,6 +78,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18",
     "@biomejs/biome": "2.5.15",
+    "@forge/api": "^8.2.0",
     "@types/bun": "^1.4",
     "@types/node": "22",
     "lefthook": "^2.1",
@@ -80,6 +91,18 @@
   },
   "peerDependencies": {
     "@forge/api": "^8.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@forge/api": {
+      "optional": true
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "forge": [
+        "./dist/forge.d.cts"
+      ]
+    }
   },
   "engines": {
     "node": ">=22"

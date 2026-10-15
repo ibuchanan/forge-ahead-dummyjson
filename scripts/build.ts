@@ -15,13 +15,14 @@ rmSync("dist", { recursive: true, force: true });
 
 for (const format of ["esm", "cjs"] as const) {
   const result = await Bun.build({
-    entrypoints: ["./src/index.ts"],
+    entrypoints: ["./src/index.ts", "./src/forge.ts"],
     outdir: "dist",
     target: "node",
     format,
-    external,
+    // Bundle openapi-fetch so its ESM default stays callable in CommonJS output.
+    external: external.filter((name) => name !== "openapi-fetch"),
     sourcemap: "external",
-    naming: `index.${format === "esm" ? "mjs" : "cjs"}`,
+    naming: `[name].${format === "esm" ? "mjs" : "cjs"}`,
   });
   if (!result.success) {
     for (const log of result.logs) console.error(log);
@@ -30,8 +31,10 @@ for (const format of ["esm", "cjs"] as const) {
 }
 
 execFileSync(
-  "node_modules/.bin/tsc",
+  process.execPath,
   [
+    "run",
+    "node_modules/typescript/bin/tsc",
     "--declaration",
     "--emitDeclarationOnly",
     "--outDir",
@@ -44,6 +47,7 @@ execFileSync(
     "ES2022",
     "--skipLibCheck",
     "src/index.ts",
+    "src/forge.ts",
   ],
   { stdio: "inherit" },
 );
@@ -55,13 +59,16 @@ copyFileSync("dist/generated.d.ts", "dist/generated.d.mts");
 copyFileSync("dist/generated.d.ts", "dist/generated.d.cts");
 rmSync("dist/generated.d.ts");
 
-const indexDts = readFileSync("dist/index.d.ts", "utf8");
-writeFileSync(
-  "dist/index.d.mts",
-  indexDts.replace('"./generated"', '"./generated.mjs"'),
-);
-writeFileSync(
-  "dist/index.d.cts",
-  indexDts.replace('"./generated"', '"./generated.cjs"'),
-);
-rmSync("dist/index.d.ts");
+for (const name of ["index", "forge"]) {
+  const dts = readFileSync(`dist/${name}.d.ts`, "utf8");
+  for (const [declaration, runtime] of [
+    ["mts", "mjs"],
+    ["cts", "cjs"],
+  ]) {
+    writeFileSync(
+      `dist/${name}.d.${declaration}`,
+      dts.replace(/"\.\/(generated|index)"/g, `"./$1.${runtime}"`),
+    );
+  }
+  rmSync(`dist/${name}.d.ts`);
+}

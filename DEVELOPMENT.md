@@ -4,9 +4,9 @@ This guide covers the local development loop for `@forge-ahead/dummyjson`. The p
 
 ## Setup
 
-Use [Bun](https://bun.sh) 1.4 or newer. The package targets Node.js 22+ at
-runtime for consumers of the published package, but Bun is all you need for
-development here:
+Use [Bun](https://bun.sh) 1.4 or newer. The shared entry point supports browsers
+with standard fetch APIs and Node.js 22+; the `/forge` entry point is backend-only.
+Bun is all you need for development here:
 
 ```sh
 bun install
@@ -18,7 +18,6 @@ bun run build
 | Command                 | Purpose                                                        |
 | ----------------------- | -------------------------------------------------------------- |
 | `bun run build`         | Build the package with `scripts/build.ts` (Bun bundler for `dist/*.mjs`/`dist/*.cjs`, `tsc` for declarations). |
-| `bun run dev`           | Rebuild on change with `bun --watch scripts/build.ts`.                 |
 | `bun run check`         | Run formatting, lint, TypeScript, tests, and the production build. |
 | `bun run format`        | Format files with Biome.                                       |
 | `bun run lint:fix`      | Apply Biome lint fixes.                                        |
@@ -50,11 +49,11 @@ run contract verification, regenerate the contract, or call the live API. See
 
 ### Wire a consuming Forge app
 
-The library exports typed read-only `createDummyJSONClient().GET` (Forge
-backend `api.fetch`, `Result` errors), `fetchRawPage`, and opt-in
-`createRemainingPages`. The host must install the package and `@forge/api`,
-call the client from backend code, and declare backend egress in **its own**
-`manifest.yml`:
+Import the zero-argument `createDummyJSONClient` from
+`@forge-ahead/dummyjson/forge` for backend `api.fetch` with `Result` errors.
+Import `fetchRawPage` and opt-in `createRemainingPages` from the runtime-neutral
+root entry point. The host must install the package and `@forge/api`, call the
+adapter from backend code, and declare backend egress in **its own** `manifest.yml`:
 
 ```yaml
 permissions:
@@ -102,7 +101,18 @@ continuation invocation. The package does not configure permissions, queue
 consumers, Assets/Jira mappings, or retries.
 
 Run `bun run pack:check` to verify the packed file list plus `package.json`
-shape (`publint`) and that declaration files resolve correctly under every
-module-resolution mode a consumer might use (`@arethetypeswrong/cli`).
+shape (`publint`) and supported declaration-resolution modes
+(`@arethetypeswrong/cli`). `bun test test/package.test.ts` additionally builds
+and installs the tarball in an isolated consumer, tests ESM/CommonJS entry
+points, bundles the root for a browser while rejecting Forge and Node built-ins,
+and typechecks browser declarations with `types: []` and no Node ambient types.
+This fixture stays offline by reusing the lockfile's pinned runtime resolutions;
+it supplies the Git-based errors dependency's prepared `dist` because lifecycle
+scripts are disabled. It does not install Forge until the adapter stub is added.
+Browser/bundler and legacy CommonJS fixtures use `skipLibCheck: false`. The
+NodeNext fixture uses `skipLibCheck: true` because the existing
+`@forge-ahead/errors` dependency has extensionless relative ESM declaration
+imports (TS2834); fully strict NodeNext dependency checking needs an upstream
+errors-package fix, not a change to this client's endpoint contract.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
