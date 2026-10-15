@@ -1,6 +1,6 @@
 {
   "name": "@forge-ahead/dummyjson",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "A runtime-neutral, typed DummyJSON client with a Forge backend adapter.",
   "keywords": [

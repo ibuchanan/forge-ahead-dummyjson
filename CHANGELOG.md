@@ -1,3 +1,17 @@
+# Changelog
+
+All notable changes to this project are documented here.
+
+## [0.3.0] - 2026-10-15
+
+### 🚀 Features
+
+- *(client)* [**breaking**] Separate transport from Forge runtime
+
+### ⚙️ Miscellaneous Tasks
+
+- *(release)* Keep breaking bumps minor before 1.0
+- *(release)* Refresh git-cliff template
 ## What's Changed in 0.2.0
 * NONE Enforce strict publint and attw profiles
 * NONE Concentrate remaining-page continuation
